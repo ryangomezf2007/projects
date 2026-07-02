@@ -1,0 +1,706 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CAN Protocol — Team Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-brand"><span class="mono bracket">&lt;</span>CAN<span class="mono bracket">/&gt;</span></div>
+  <div class="nav-members">
+    <a href="#m1" class="mem-link"><span class="mem-dot" style="--c:#6EE7F7"></span>Intro</a>
+    <a href="#m2" class="mem-link"><span class="mem-dot" style="--c:#A78BFA"></span>Bus</a>
+    <a href="#m3" class="mem-link"><span class="mem-dot" style="--c:#34D399"></span>Frame</a>
+    <a href="#m4" class="mem-link"><span class="mem-dot" style="--c:#FB923C"></span>Arbitration</a>
+    <a href="#m5" class="mem-link"><span class="mem-dot" style="--c:#F472B6"></span>Apps</a>
+    <a href="#presentation" class="nav-ppt">📊 Presentation</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  
+  <!-- ADD THIS: Fullscreen Background Video -->
+  <video class="hero-bg-video" src="can.mp4" autoplay loop muted playsinline></video>
+  
+  <div class="hero-bg-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge mono">Controller Area Network Protocol</div>
+    <h1 class="hero-title">
+      One Bus.<br/>
+      <span class="outline-text">Every Signal.</span><br/>
+      <span class="glow-text">Zero Chaos.</span>
+    </h1>
+    <p class="hero-sub">A team deep-dive into the protocol that connects every brain inside a modern vehicle — from engine to airbag to dashboard.</p>
+    <div class="hero-cta-row">
+      <a href="#m1" class="btn-cyan">Start Exploring ↓</a>
+      <a href="#presentation" class="btn-outline">View Presentation →</a>
+    </div>
+
+    <!-- Live CAN Bus visualiser -->
+    <div class="hero-bus-wrap">
+      <div class="bus-scene">
+        <!-- ECU nodes top row -->
+        <div class="ecu-row top-ecus">
+          <div class="ecu-node" id="ecu-engine" style="--c:#6EE7F7">
+            <div class="ecu-icon">⚙️</div><div class="ecu-name">Engine ECU</div>
+            <div class="ecu-pulse"></div>
+          </div>
+          <div class="ecu-node" id="ecu-brake" style="--c:#FB923C">
+            <div class="ecu-icon">🛞</div><div class="ecu-name">Brake ECU</div>
+            <div class="ecu-pulse"></div>
+          </div>
+          <div class="ecu-node" id="ecu-airbag" style="--c:#F472B6">
+            <div class="ecu-icon">🛡️</div><div class="ecu-name">Airbag ECU</div>
+            <div class="ecu-pulse"></div>
+          </div>
+          <div class="ecu-node" id="ecu-dash" style="--c:#34D399">
+            <div class="ecu-icon">📊</div><div class="ecu-name">Dashboard ECU</div>
+            <div class="ecu-pulse"></div>
+          </div>
+        </div>
+        <!-- vertical drops -->
+        <div class="vdrops">
+          <div class="vdrop"></div><div class="vdrop"></div>
+          <div class="vdrop"></div><div class="vdrop"></div>
+        </div>
+        <!-- The two wires -->
+        <div class="two-wires">
+          <div class="wire canh-wire">
+            <div class="wire-label mono">CAN-H</div>
+            <div class="packet pk1"></div>
+            <div class="packet pk2" style="animation-delay:1.4s"></div>
+            <div class="packet pk3" style="animation-delay:2.7s"></div>
+          </div>
+          <div class="wire canl-wire">
+            <div class="wire-label mono">CAN-L</div>
+            <div class="packet pk4" style="animation-delay:0.7s; background:var(--amber)"></div>
+            <div class="packet pk5" style="animation-delay:2s; background:var(--amber)"></div>
+          </div>
+        </div>
+        <div class="bus-caption mono">120Ω terminator on each end</div>
+        <!-- message popup -->
+        <div class="msg-popup" id="msgPopup">
+          <span class="msg-id mono">ID: 0x100</span>
+          <span class="msg-data mono">DATA: RPM=3000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ══════════════════════════════ MEMBER 1 ══════════════════════════════ -->
+<section id="m1" class="member-section reveal" style="--accent:#6EE7F7">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#6EE7F7">
+      <span class="badge-num">1</span>
+      <span class="badge-role">Introduction + Need of CAN</span>
+    </div>
+    <h2 class="section-heading">What is CAN Protocol?<br/><span style="color:var(--accent)">And Why Was It Invented?</span></h2>
+
+    <!-- What is CAN -->
+    <div class="content-block">
+      <div class="content-text">
+        <h3 class="block-title">CAN — The Car's Internal Internet</h3>
+        <p>CAN (Controller Area Network) is a communication system that allows different computers (ECUs) inside a car to talk to each other <strong>without a central host</strong>. Developed by Bosch in 1986 and standardized as ISO 11898, it became mandatory in all cars sold in the USA from 2008.</p>
+        <div class="highlight-box" style="--accent:#6EE7F7">
+          <div class="highlight-icon">💡</div>
+          <div>A modern car has <strong>70+ ECUs</strong>. Without CAN, they'd each need separate wire pairs — thousands of wires, hundreds of kilograms of copper.</div>
+        </div>
+      </div>
+      <div class="analogy-card" style="--accent:#6EE7F7">
+        <div class="analogy-icon">🏫</div>
+        <div class="analogy-title">Analogy</div>
+        <div class="analogy-text">CAN is like a <strong>common notice board</strong> in a school. Any student (ECU) can post a notice (message). Every other student can read it. No one needs a personal messenger.</div>
+      </div>
+    </div>
+
+    <!-- Problems Before CAN -->
+    <h3 class="sub-heading">Problems Before CAN</h3>
+    <div class="before-after-grid">
+      <div class="before-card">
+        <div class="ba-header" style="color:#F87171">❌ Before CAN</div>
+        <div class="ba-items">
+          <div class="ba-item bad">Separate wire for every sensor/actuator pair</div>
+          <div class="ba-item bad">Engine → Dashboard needed its own wire</div>
+          <div class="ba-item bad">Brake → ABS needed its own wire</div>
+          <div class="ba-item bad">Result: 2km+ of wiring in a car</div>
+          <div class="ba-item bad">Heavy, expensive, failure-prone</div>
+        </div>
+        <!-- Wiring chaos animation -->
+        <div class="chaos-wires" id="chaosWires"></div>
+      </div>
+      <div class="after-card">
+        <div class="ba-header" style="color:#34D399">✅ With CAN</div>
+        <div class="ba-items">
+          <div class="ba-item good">All ECUs share just 2 wires</div>
+          <div class="ba-item good">Any ECU can send/receive any message</div>
+          <div class="ba-item good">Plug-in new ECU = instant connectivity</div>
+          <div class="ba-item good">Under 100m total wiring length</div>
+          <div class="ba-item good">Lighter, cheaper, more reliable</div>
+        </div>
+        <div class="mini-bus-demo">
+          <div class="mini-node" style="--c:#6EE7F7">Engine</div>
+          <div class="mini-node" style="--c:#FB923C">Brake</div>
+          <div class="mini-node" style="--c:#F472B6">Airbag</div>
+          <div class="mini-node" style="--c:#34D399">Dash</div>
+          <div class="mini-wire">
+            <div class="mini-packet"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECU showcase -->
+    <h3 class="sub-heading">The ECUs That Need to Talk</h3>
+    <div class="ecu-showcase">
+      <div class="ecu-card" style="--c:#6EE7F7"><div class="ecu-card-icon">⚙️</div><strong>Engine ECU</strong><p>Controls fuel injection, ignition timing, throttle</p></div>
+      <div class="ecu-card" style="--c:#FB923C"><div class="ecu-card-icon">🛞</div><strong>Brake ECU</strong><p>ABS, brake force distribution, emergency braking</p></div>
+      <div class="ecu-card" style="--c:#F472B6"><div class="ecu-card-icon">🛡️</div><strong>Airbag ECU</strong><p>Crash detection, airbag deployment timing</p></div>
+      <div class="ecu-card" style="--c:#34D399"><div class="ecu-card-icon">📊</div><strong>Dashboard ECU</strong><p>Speed display, warning lights, fuel gauge</p></div>
+      <div class="ecu-card" style="--c:#A78BFA"><div class="ecu-card-icon">❄️</div><strong>Climate ECU</strong><p>AC control, fan speed, temperature sensors</p></div>
+      <div class="ecu-card" style="--c:#FBBF24"><div class="ecu-card-icon">🔐</div><strong>Body ECU</strong><p>Doors, windows, lights, central locking</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ MEMBER 2 ══════════════════════════════ -->
+<section id="m2" class="member-section reveal" style="--accent:#A78BFA">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#A78BFA">
+      <span class="badge-num">2</span>
+      <span class="badge-role">CAN Bus + How Communication Works</span>
+    </div>
+    <h2 class="section-heading">The CAN Bus<br/><span style="color:#A78BFA">Two Wires. Infinite Conversations.</span></h2>
+
+    <!-- CAN-H and CAN-L -->
+    <div class="wire-explainer">
+      <div class="wire-info canh-info">
+        <div class="wire-color-bar" style="background:#6EE7F7"></div>
+        <h3>CAN-H (High)</h3>
+        <p>In a dominant bit: ~3.5V<br/>In a recessive bit: ~2.5V</p>
+        <div class="wire-role">Carries the positive component of the differential signal</div>
+      </div>
+      <div class="diff-visual">
+        <div class="diff-title mono">Differential Voltage</div>
+        <svg viewBox="0 0 300 120" class="signal-svg">
+          <line x1="0" y1="60" x2="300" y2="60" stroke="#333" stroke-width="1"/>
+          <!-- CANH -->
+          <polyline points="0,40 50,40 50,20 100,20 100,40 150,40 150,20 200,20 200,40 250,40 250,20 300,20"
+            fill="none" stroke="#6EE7F7" stroke-width="2.5"/>
+          <!-- CANL -->
+          <polyline points="0,80 50,80 50,100 100,100 100,80 150,80 150,100 200,100 200,80 250,80 250,100 300,100"
+            fill="none" stroke="#FBBF24" stroke-width="2.5"/>
+          <!-- labels -->
+          <text x="5" y="35" fill="#6EE7F7" font-size="10" font-family="monospace">CAN-H</text>
+          <text x="5" y="95" fill="#FBBF24" font-size="10" font-family="monospace">CAN-L</text>
+          <text x="60" y="60" fill="#aaa" font-size="9" font-family="monospace">dominant</text>
+          <text x="160" y="60" fill="#aaa" font-size="9" font-family="monospace">dominant</text>
+          <!-- difference shading -->
+          <rect x="50" y="20" width="50" height="80" fill="rgba(110,231,247,0.08)"/>
+          <rect x="150" y="20" width="50" height="80" fill="rgba(110,231,247,0.08)"/>
+        </svg>
+        <div class="diff-note mono">Vdiff = CANH − CANL → noise immune!</div>
+      </div>
+      <div class="wire-info canl-info">
+        <div class="wire-color-bar" style="background:#FBBF24"></div>
+        <h3>CAN-L (Low)</h3>
+        <p>In a dominant bit: ~1.5V<br/>In a recessive bit: ~2.5V</p>
+        <div class="wire-role">Carries the negative component — together they reject noise</div>
+      </div>
+    </div>
+
+    <!-- How communication happens step by step -->
+    <h3 class="sub-heading">How Communication Happens — Step by Step</h3>
+    <div class="steps-timeline">
+      <div class="timeline-step" style="--i:0;--c:#A78BFA">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Engine ECU sends a message</div>
+          <div class="step-desc">Engine ECU puts a message on the bus: <span class="mono inline-code">ID=0x100 | DATA: Speed=80km/h, RPM=3000</span></div>
+        </div>
+      </div>
+      <div class="timeline-step" style="--i:1;--c:#6EE7F7">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">All ECUs receive the message</div>
+          <div class="step-desc">Every ECU on the bus receives the frame. It's like a broadcast — no one needs to be "called".</div>
+        </div>
+      </div>
+      <div class="timeline-step" style="--i:2;--c:#34D399">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Each ECU decides: relevant or not?</div>
+          <div class="step-desc">Dashboard ECU: ID=0x100 means speed → <strong>show 80 km/h</strong><br/>Gear ECU: ID=0x100 → <strong>adjust gear ratio</strong><br/>Airbag ECU: not relevant → <strong>ignore</strong></div>
+        </div>
+      </div>
+      <div class="timeline-step" style="--i:3;--c:#FB923C">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Bus becomes free again</div>
+          <div class="step-desc">After the message frame ends, any ECU may now transmit. The cycle repeats thousands of times per second.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <h3 class="sub-heading">Interactive Message Demo</h3>
+    <div class="msg-demo-box">
+      <div class="msg-demo-top">
+        <div class="sender-ecus">
+          <button class="send-btn" onclick="sendMsg('engine','0x100','Speed=80 RPM=3000','#6EE7F7')" style="--c:#6EE7F7">⚙️ Engine sends</button>
+          <button class="send-btn" onclick="sendMsg('brake','0x200','BrakeForce=40%','#FB923C')" style="--c:#FB923C">🛞 Brake sends</button>
+          <button class="send-btn" onclick="sendMsg('airbag','0x050','CRASH_DETECTED!','#F472B6')" style="--c:#F472B6">🛡️ Airbag sends</button>
+        </div>
+        <div class="bus-visual-demo" id="busVisual">
+          <div class="bus-track">
+            <div class="demo-wire-h"></div>
+            <div class="demo-wire-l"></div>
+            <div id="demoPacket" class="demo-packet" style="display:none"></div>
+          </div>
+        </div>
+        <div class="receivers-grid">
+          <div class="recv-ecu" id="recv-dash" style="--c:#34D399">📊 Dashboard<div class="recv-status" id="rd-status">—</div></div>
+          <div class="recv-ecu" id="recv-gear" style="--c:#A78BFA">⚙️ Gear<div class="recv-status" id="rg-status">—</div></div>
+          <div class="recv-ecu" id="recv-ab" style="--c:#F472B6">🛡️ Airbag<div class="recv-status" id="ra-status">—</div></div>
+          <div class="recv-ecu" id="recv-engine" style="--c:#6EE7F7">⚙️ Engine<div class="recv-status" id="re-status">—</div></div>
+        </div>
+      </div>
+      <div id="msgLog" class="msg-log"><div class="log-placeholder">Click a send button to simulate CAN traffic…</div></div>
+    </div>
+
+    <div class="analogy-card" style="--accent:#A78BFA; margin-top:2rem">
+      <div class="analogy-icon">🛣️</div>
+      <div class="analogy-title">Analogy</div>
+      <div class="analogy-text">CAN bus is like a <strong>highway</strong>. All vehicles (messages) travel the same road. Each driver (ECU) knows which exit (message ID) is meant for them and ignores the rest.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ MEMBER 3 ══════════════════════════════ -->
+<section id="m3" class="member-section reveal" style="--accent:#34D399">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#34D399">
+      <span class="badge-num">3</span>
+      <span class="badge-role">CAN Message Frame Format</span>
+    </div>
+    <h2 class="section-heading">CAN Frame Format<br/><span style="color:#34D399">Anatomy of a CAN Message</span></h2>
+    <p class="section-intro">Every CAN message is a structured frame. Like a letter — it has an address (ID), a body (Data), and error-checking (CRC). Hover each field to learn what it does.</p>
+
+    <!-- Frame visualiser -->
+    <div class="frame-visualiser">
+      <div class="frame-fields" id="frameFields">
+        <div class="ff sof" data-tip="Start of Frame (SOF) — 1 dominant (low) bit. Tells all ECUs: 'A message is coming — stop what you're doing and listen!'">
+          <div class="ff-name">SOF</div><div class="ff-size">1 bit</div>
+        </div>
+        <div class="ff arb" data-tip="Arbitration ID — 11 bits. This is the MESSAGE NAME. Lower value = higher priority. Example: Airbag (ID=0x050) beats Radio (ID=0x3FF).">
+          <div class="ff-name">ID</div><div class="ff-size">11 bits</div>
+        </div>
+        <div class="ff rtr" data-tip="Remote Transmission Request — 1 bit. If dominant (0): this is a Data Frame. If recessive (1): this is a Remote Frame requesting data from another node.">
+          <div class="ff-name">RTR</div><div class="ff-size">1 bit</div>
+        </div>
+        <div class="ff ctrl" data-tip="Control Field — 6 bits. Includes the DLC (Data Length Code) which says how many bytes of actual data follow. Range: 0 to 8 bytes.">
+          <div class="ff-name">CTRL</div><div class="ff-size">6 bits</div>
+        </div>
+        <div class="ff data" data-tip="DATA — 0 to 64 bits (0–8 bytes). The actual payload. Example: Engine speed = 3000 RPM stored as 2 bytes: 0x0B 0xB8.">
+          <div class="ff-name">DATA</div><div class="ff-size">0–64 bits</div>
+        </div>
+        <div class="ff crc" data-tip="CRC (Cyclic Redundancy Check) — 15-bit checksum. Calculated by transmitter; recalculated by every receiver. Mismatch = error detected!">
+          <div class="ff-name">CRC</div><div class="ff-size">15 bits</div>
+        </div>
+        <div class="ff ack" data-tip="ACK Slot — 2 bits. Any node that received the frame correctly pulls this bit dominant. If the sender reads recessive here → nobody received it → retransmit!">
+          <div class="ff-name">ACK</div><div class="ff-size">2 bits</div>
+        </div>
+        <div class="ff eof" data-tip="End of Frame (EOF) — 7 recessive bits. Marks the end of the message. After this, the bus is free for the next transmission.">
+          <div class="ff-name">EOF</div><div class="ff-size">7 bits</div>
+        </div>
+      </div>
+      <div class="ff-tooltip-box" id="ffTooltip">👆 Hover a field to learn what it does</div>
+    </div>
+
+    <!-- Real example decode -->
+    <h3 class="sub-heading">Real Frame Example — Engine Speed Message</h3>
+    <div class="decode-example">
+      <div class="decode-row"><span class="decode-field" style="--c:#6EE7F7">SOF</span><span class="decode-val mono">0</span><span class="decode-meaning">Start: 1 dominant bit</span></div>
+      <div class="decode-row"><span class="decode-field" style="--c:#A78BFA">ID</span><span class="decode-val mono">0x100</span><span class="decode-meaning">Message name: Engine Speed data</span></div>
+      <div class="decode-row"><span class="decode-field" style="--c:#FB923C">RTR</span><span class="decode-val mono">0</span><span class="decode-meaning">Data frame (not a request)</span></div>
+      <div class="decode-row"><span class="decode-field" style="--c:#FBBF24">DLC</span><span class="decode-val mono">2</span><span class="decode-meaning">2 bytes of data follow</span></div>
+      <div class="decode-row"><span class="decode-field" style="--c:#34D399">DATA</span><span class="decode-val mono">0x0B 0xB8</span><span class="decode-meaning">= 3000 RPM in hexadecimal</span></div>
+      <div class="decode-row"><span class="decode-field" style="--c:#F472B6">CRC</span><span class="decode-val mono">0x7A3C</span><span class="decode-meaning">Checksum for error detection</span></div>
+      <div class="decode-row"><span class="decode-field" style="--c:#6EE7F7">ACK</span><span class="decode-val mono">0</span><span class="decode-meaning">Dominant: receivers confirm OK</span></div>
+    </div>
+
+    <!-- Animated bitstream -->
+    <h3 class="sub-heading">Live Bit Stream Simulation</h3>
+    <div class="bitstream-container">
+      <div class="bs-labels">
+        <span class="bs-seg" style="width:30px;color:#6EE7F7">SOF</span>
+        <span class="bs-seg" style="width:110px;color:#A78BFA">─── ID (11 bits) ───</span>
+        <span class="bs-seg" style="width:40px;color:#FB923C">RTR</span>
+        <span class="bs-seg" style="width:60px;color:#FBBF24">─ CTRL ─</span>
+        <span class="bs-seg" style="width:160px;color:#34D399">──────── DATA (8 bytes) ────────</span>
+        <span class="bs-seg" style="width:90px;color:#F472B6">─ CRC ─</span>
+      </div>
+      <div class="bitstream-track" id="bsTrack"></div>
+    </div>
+
+    <div class="analogy-card" style="--accent:#34D399; margin-top:2rem">
+      <div class="analogy-icon">✉️</div>
+      <div class="analogy-title">Analogy</div>
+      <div class="analogy-text">A CAN frame is like a <strong>letter</strong>. The <strong>ID</strong> is the address (who/what it's about). The <strong>Data</strong> is the actual message. The <strong>CRC</strong> is a tamper seal — if broken, the letter is rejected.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ MEMBER 4 ══════════════════════════════ -->
+<section id="m4" class="member-section reveal" style="--accent:#FB923C">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#FB923C">
+      <span class="badge-num">4</span>
+      <span class="badge-role">Arbitration + Error Handling</span>
+    </div>
+    <h2 class="section-heading">Non-Destructive Arbitration<br/><span style="color:#FB923C">Who Gets the Bus?</span></h2>
+    <p class="section-intro">When two ECUs transmit simultaneously, CAN resolves the conflict through bitwise arbitration — without corrupting either message. The lower ID always wins.</p>
+
+    <!-- Arbitration animation -->
+    <div class="arb-container">
+      <div class="arb-nodes">
+        <div class="arb-node-box winner-box" id="arbWinner">
+          <div class="arb-node-title" style="color:#34D399">🛡️ Airbag ECU</div>
+          <div class="arb-node-id mono">ID = <span style="color:#34D399">0x050</span> (binary: <span style="color:#34D399">000 0101 0000</span>)</div>
+          <div class="arb-bit-row" id="airbagBits"></div>
+          <div class="arb-node-result" id="airbagResult">Waiting…</div>
+        </div>
+        <div class="arb-vs">⚡ VS ⚡</div>
+        <div class="arb-node-box loser-box" id="arbLoser">
+          <div class="arb-node-title" style="color:#F472B6">📻 Radio ECU</div>
+          <div class="arb-node-id mono">ID = <span style="color:#F472B6">0x3FF</span> (binary: <span style="color:#F472B6">111 1111 1111</span>)</div>
+          <div class="arb-bit-row" id="radioBits"></div>
+          <div class="arb-node-result" id="radioResult">Waiting…</div>
+        </div>
+      </div>
+      <div class="arb-bus-display">
+        <div class="arb-bus-label mono">CAN Bus — Wired-AND Logic</div>
+        <div class="arb-bus-bits" id="busBits"></div>
+        <div class="arb-rule-box">
+          <div class="rule">🔗 Wired-AND: if ANY node sends <strong>dominant (0)</strong>, the bus reads <strong>0</strong></div>
+          <div class="rule">🏆 Dominant (0) = wins arbitration | Recessive (1) = loses</div>
+        </div>
+      </div>
+      <button class="btn-cyan arb-run-btn" id="arbBtn" onclick="runArbitration()">▶ Run Arbitration Demo</button>
+    </div>
+
+    <!-- Error detection -->
+    <h3 class="sub-heading">5 Layers of Error Detection</h3>
+    <div class="error-grid">
+      <div class="err-card" style="--c:#6EE7F7">
+        <div class="err-icon">🔍</div>
+        <h4>Bit Monitoring</h4>
+        <p>Transmitter reads back its own sent bits. If sent 1 but reads 0 → error flag issued immediately.</p>
+        <div class="err-example mono">TX: 1 | RX: 0 → ERROR!</div>
+      </div>
+      <div class="err-card" style="--c:#A78BFA">
+        <div class="err-icon">📦</div>
+        <h4>Bit Stuffing</h4>
+        <p>After 5 identical bits, a complementary bit is inserted. Missing stuff bit = error. Keeps signal transitions regular.</p>
+        <div class="err-example mono">11111<span style="color:#FB923C">0</span>00000 ← stuffed</div>
+      </div>
+      <div class="err-card" style="--c:#34D399">
+        <div class="err-icon">🔐</div>
+        <h4>CRC Check</h4>
+        <p>15-bit polynomial checksum. Receiver recalculates and compares. Detects up to 5 random bit errors anywhere in the frame.</p>
+        <div class="err-example mono">Tx CRC ≠ Rx CRC → ERROR</div>
+      </div>
+      <div class="err-card" style="--c:#FB923C">
+        <div class="err-icon">🏗️</div>
+        <h4>Frame Check</h4>
+        <p>EOF, ACK delimiter, CRC delimiter must have specific bit patterns. Any violation triggers an error frame.</p>
+        <div class="err-example mono">EOF ≠ 7 recessive → ERROR</div>
+      </div>
+      <div class="err-card" style="--c:#F472B6">
+        <div class="err-icon">✅</div>
+        <h4>ACK Error</h4>
+        <p>Transmitter expects a dominant ACK bit from receivers. If it sees recessive → nobody confirmed → retransmit!</p>
+        <div class="err-example mono">ACK slot = 1 → RETRANSMIT</div>
+      </div>
+    </div>
+
+    <!-- Error confinement -->
+    <h3 class="sub-heading">Error Confinement — Faulty Node Isolation</h3>
+    <div class="confinement-steps">
+      <div class="cf-step" style="--c:#34D399">
+        <div class="cf-state">Error Active</div>
+        <div class="cf-desc">Normal operation. TEC/REC &lt; 96. Node can participate fully.</div>
+      </div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step" style="--c:#FBBF24">
+        <div class="cf-state">Error Passive</div>
+        <div class="cf-desc">TEC or REC &gt; 127. Node can still receive but can't actively disrupt bus.</div>
+      </div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step" style="--c:#F87171">
+        <div class="cf-state">Bus Off</div>
+        <div class="cf-desc">TEC &gt; 255. Node disconnects from bus automatically. Others unaffected!</div>
+      </div>
+    </div>
+
+    <div class="analogy-card" style="--accent:#FB923C; margin-top:2rem">
+      <div class="analogy-icon">🚨</div>
+      <div class="analogy-title">Analogy</div>
+      <div class="analogy-text">CAN arbitration is like a <strong>road with an ambulance</strong>. When a critical message (airbag) and a low-priority message (radio) try to go simultaneously, the road system (bus) automatically gives right-of-way to the ambulance (lower ID). No crash. No delay.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ MEMBER 5 ══════════════════════════════ -->
+<section id="m5" class="member-section reveal" style="--accent:#F472B6">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#F472B6">
+      <span class="badge-num">5</span>
+      <span class="badge-role">Applications + Advantages + Conclusion</span>
+    </div>
+    <h2 class="section-heading">Where CAN Powers<br/><span style="color:#F472B6">the Real World</span></h2>
+
+    <!-- Applications -->
+    <div class="apps-mega-grid">
+      <div class="app-mega" style="--c:#6EE7F7">
+        <div class="app-mega-icon">🚗</div>
+        <h3>Automotive</h3>
+        <ul>
+          <li>Engine management (fuel, ignition)</li>
+          <li>ABS — Anti-lock braking</li>
+          <li>Airbag deployment</li>
+          <li>Dashboard instruments</li>
+          <li>Electric power steering</li>
+          <li>ADAS — Advanced driver assistance</li>
+        </ul>
+        <div class="app-std mono">ISO 11898 · J1939 · OBD-II</div>
+      </div>
+      <div class="app-mega" style="--c:#A78BFA">
+        <div class="app-mega-icon">🏭</div>
+        <h3>Industrial</h3>
+        <ul>
+          <li>PLC to sensor communication</li>
+          <li>Factory robots and conveyors</li>
+          <li>CANopen — standard profile</li>
+          <li>Elevators and cranes</li>
+          <li>CNC machines</li>
+          <li>Building automation</li>
+        </ul>
+        <div class="app-std mono">CANopen · DeviceNet</div>
+      </div>
+      <div class="app-mega" style="--c:#34D399">
+        <div class="app-mega-icon">🏥</div>
+        <h3>Medical</h3>
+        <ul>
+          <li>Surgical robots (Da Vinci)</li>
+          <li>Infusion pumps</li>
+          <li>Patient monitoring systems</li>
+          <li>Imaging equipment</li>
+          <li>Wheelchair controllers</li>
+          <li>Diagnostic devices</li>
+        </ul>
+        <div class="app-std mono">IEC 60601 · ISO 14971</div>
+      </div>
+      <div class="app-mega" style="--c:#FB923C">
+        <div class="app-mega-icon">✈️</div>
+        <h3>Aerospace</h3>
+        <ul>
+          <li>Avionics data buses</li>
+          <li>Satellite subsystems</li>
+          <li>Drone flight controllers</li>
+          <li>Spacecraft telemetry</li>
+          <li>Ground support equipment</li>
+          <li>UAV control systems</li>
+        </ul>
+        <div class="app-std mono">MIL-STD-1553 variant</div>
+      </div>
+      <div class="app-mega" style="--c:#FBBF24">
+        <div class="app-mega-icon">⚡</div>
+        <h3>Electric Vehicles</h3>
+        <ul>
+          <li>Battery Management System</li>
+          <li>Cell voltage monitoring</li>
+          <li>Thermal management</li>
+          <li>Charging control</li>
+          <li>CAN FD for faster data</li>
+          <li>State-of-health reporting</li>
+        </ul>
+        <div class="app-std mono">CAN FD · ISO 15765</div>
+      </div>
+      <div class="app-mega" style="--c:#F472B6">
+        <div class="app-mega-icon">🤖</div>
+        <h3>Robotics</h3>
+        <ul>
+          <li>Joint motor controllers</li>
+          <li>Sensor fusion networks</li>
+          <li>ROS (Robot OS) CAN bridge</li>
+          <li>Humanoid robot joints</li>
+          <li>Warehouse AMRs</li>
+          <li>Collaborative robots (cobots)</li>
+        </ul>
+        <div class="app-std mono">CANopen · EtherCAT via CAN</div>
+      </div>
+    </div>
+
+    <!-- Advantages -->
+    <h3 class="sub-heading">Why CAN Wins — 5 Key Advantages</h3>
+    <div class="adv-list">
+      <div class="adv-item" style="--c:#6EE7F7; --i:0">
+        <div class="adv-check">✅</div>
+        <div class="adv-content">
+          <h4>Less Wiring</h4>
+          <p>All ECUs share 2 wires. A car goes from 2km+ of wiring down to under 100m. Lighter = better fuel economy.</p>
+        </div>
+      </div>
+      <div class="adv-item" style="--c:#A78BFA; --i:1">
+        <div class="adv-check">✅</div>
+        <div class="adv-content">
+          <h4>Low Cost</h4>
+          <p>Fewer wires, cheaper connectors, simpler PCB routing. Mass production drives chip costs under $1 USD per node.</p>
+        </div>
+      </div>
+      <div class="adv-item" style="--c:#34D399; --i:2">
+        <div class="adv-check">✅</div>
+        <div class="adv-content">
+          <h4>Fast Communication</h4>
+          <p>Up to 1 Mbps (CAN FD: 8 Mbps). A car processes 2,000+ messages per second reliably across all ECUs.</p>
+        </div>
+      </div>
+      <div class="adv-item" style="--c:#FB923C; --i:3">
+        <div class="adv-check">✅</div>
+        <div class="adv-content">
+          <h4>Highly Reliable</h4>
+          <p>Differential signaling rejects electrical noise. Operates in harsh environments: engine bay heat, vibration, EMI.</p>
+        </div>
+      </div>
+      <div class="adv-item" style="--c:#F472B6; --i:4">
+        <div class="adv-check">✅</div>
+        <div class="adv-content">
+          <h4>Built-in Error Detection</h4>
+          <p>5 independent error checks per frame. Faulty nodes self-isolate. The bus keeps running even when one node fails.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="conclusion-block">
+      <h3 class="sub-heading" style="text-align:center">Team Summary</h3>
+      <div class="conclusion-grid">
+        <div class="concl-item" style="--c:#6EE7F7"><span class="concl-num">👤1</span><strong>CAN was born</strong> to replace thousands of wires with 2</div>
+        <div class="concl-item" style="--c:#A78BFA"><span class="concl-num">👤2</span><strong>The bus</strong> uses differential voltage — noise-immune, fault-tolerant</div>
+        <div class="concl-item" style="--c:#34D399"><span class="concl-num">👤3</span><strong>Each frame</strong> has ID, Data, and CRC — like a structured letter</div>
+        <div class="concl-item" style="--c:#FB923C"><span class="concl-num">👤4</span><strong>Arbitration</strong> gives priority to critical messages automatically</div>
+        <div class="concl-item" style="--c:#F472B6"><span class="concl-num">👤5</span><strong>CAN is everywhere</strong> — cars, hospitals, rockets, factories</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ VIDEO ══════════════════════════════ -->
+<section id="video" class="member-section reveal" style="--accent:#6EE7F7; background: rgba(110,231,247,0.03)">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#6EE7F7">
+      <span class="badge-num">🎬</span>
+      <span class="badge-role">Video Resources</span>
+    </div>
+    <h2 class="section-heading">Watch &amp; Learn</h2>
+    <p class="section-intro">Visual explainers to reinforce every concept covered by the team.</p>
+    <div class="video-main-wrap">
+      <iframe src="https://www.youtube.com/embed/FqLDpHsxvf8" title="CAN Bus Explained" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-secondary">
+      <div class="video-small-wrap">
+        <div class="video-small-label">CAN Arbitration Deep Dive</div>
+        <iframe src="https://www.youtube.com/embed/v4a8cLXXF2A" title="CAN Arbitration" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="video-small-wrap">
+        <div class="video-small-label">CAN FD — The Next Generation</div>
+        <iframe src="https://www.youtube.com/embed/zp_4kiyRMhs" title="CAN FD" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PRESENTATION ══════════════════════════════ -->
+<section id="presentation" class="member-section reveal" style="--accent:#A78BFA">
+  <div class="section-wrap">
+    <div class="member-badge" style="--accent:#A78BFA">
+      <span class="badge-num">📊</span>
+      <span class="badge-role">Team Presentation</span>
+    </div>
+    <h2 class="section-heading">CAN Protocol<br/><span style="color:#A78BFA">Presentation Slides</span></h2>
+
+    <!-- Flash message -->
+    <div th:if="${uploadMsg}" class="flash-msg"
+         th:classappend="${msgType == 'success'} ? 'flash-success' : 'flash-error'"
+         th:text="${uploadMsg}"></div>
+
+    <div class="ppt-zone">
+      <!-- PPT AVAILABLE -->
+      <div th:if="${pptAvailable}" class="ppt-ready">
+        <div class="ppt-ready-icon">📊</div>
+        <h3>Presentation is Ready!</h3>
+        <p>Your CAN Protocol team presentation has been uploaded and is ready to view.</p>
+        <a href="/presentation" target="_blank" class="btn-cyan btn-xl">
+          🚀 Open Presentation
+        </a>
+        <form th:action="@{/upload-ppt}" method="post" enctype="multipart/form-data" style="margin-top:1.5rem">
+          <label class="reupload-link">
+            <input type="file" name="file" accept=".pptx,.ppt" onchange="this.form.submit();" style="display:none"/>
+            ↩️ Replace with new file
+          </label>
+        </form>
+      </div>
+
+      <!-- BUILT-IN PPT PRESENTATION -->
+
+      <div class="ppt-upload-zone">
+
+        <div class="upload-cloud">📊</div>
+
+        <h3>CAN Protocol Presentation</h3>
+
+        <p>
+          Interactive presentation about
+          <span class="mono">Controller Area Network</span>
+        </p>
+
+
+        <a href="/ppt/can-protocol-presentation.pptx" class="btn-cyan">
+          ▶️ Open Presentation
+        </a>
+
+
+        <div class="upload-hint mono">
+          Hosted inside CAN Protocol Explorer
+        </div>
+
+        <div class="upload-hint mono">
+          No download required • View directly in browser
+        </div>
+
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
